@@ -1,0 +1,211 @@
+<section class="hero" aria-labelledby="hero-title">
+  @if (homeData()?.heroVideo; as hero) {
+    @if (!prefersReducedMotion()) {
+      <video
+        #heroVideoEl
+        class="hero__video"
+        [src]="hero.mediaUrl"
+        [poster]="hero.posterUrl || ''"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+        aria-hidden="true"
+      ></video>
+    } @else if (hero.posterUrl) {
+      <img class="hero__video" [src]="hero.posterUrl" [alt]="hero.title" />
+    }
+  }
+  <div class="hero__overlay" aria-hidden="true"></div>
+
+  <div class="hero__container">
+    <div class="hero__grid">
+      <div class="hero__copy">
+        <p class="hero__eyebrow">
+          LABORATORIO DE TUESTE &amp; EXTRACCIÓN · {{ homeData()?.business?.city || 'SANTA CRUZ' }}
+        </p>
+        <h1 class="hero__title" id="hero-title">
+          {{ homeData()?.business?.slogan || 'Tostaduría de precisión y café de especialidad.' }}
+        </h1>
+        <p class="hero__lead">
+          {{ homeData()?.business?.shortAbout || 'Cargando manifiesto del laboratorio desde el servidor...' }}
+        </p>
+
+        <div class="hero__actions">
+          <a class="lab-btn lab-btn--hero" routerLink="/precios">
+            Explorar Precios &amp; Carta &#8594;
+          </a>
+          <button
+            class="lab-btn lab-btn--hero-ghost"
+            type="button"
+            (click)="openBarista()"
+          >
+            Hablar con el Barista IA
+          </button>
+        </div>
+      </div>
+
+      @if (homeData()?.heroVideo; as hero) {
+        <aside class="hero__telemetry" aria-label="Ficha técnica del video">
+          <span class="hero__telemetry-kicker">VIDEO EN VIVO · PEXELS ARCHIVE</span>
+          <strong>{{ hero.title }}</strong>
+          <p>{{ hero.caption }}</p>
+          @if (hero.pexelsSourceUrl) {
+            <a [href]="hero.pexelsSourceUrl" target="_blank" rel="noopener noreferrer">
+              Crédito: {{ hero.pexelsAuthor || 'Pexels' }} &#8599;
+            </a>
+          }
+        </aside>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Barra técnica de estado estilo Onyx Coffee Lab -->
+@if (homeData()?.business; as biz) {
+  <section class="ticker" aria-label="Información operativa en vivo">
+    <div class="ticker__inner">
+      <div class="ticker__cell">
+        <span>HORARIO HOY (LUN–VIE)</span>
+        <strong>{{ biz.openingHours.lunes_viernes }}</strong>
+      </div>
+      <div class="ticker__cell">
+        <span>FINES DE SEMANA</span>
+        <strong>Sáb {{ biz.openingHours.sabado }} · Dom {{ biz.openingHours.domingo }}</strong>
+      </div>
+      <div class="ticker__cell">
+        <span>COFFEE LAB</span>
+        <strong>{{ biz.address }}</strong>
+      </div>
+      <div class="ticker__cell">
+        <span>ASISTENCIA DIRECTA</span>
+        <strong>{{ biz.phone }}</strong>
+      </div>
+    </div>
+  </section>
+}
+
+@if (error()) {
+  <div class="lab-alert">{{ error() }}</div>
+}
+
+<!-- Especialidades Destacadas -->
+<section class="section" aria-labelledby="home-specialties-title" appReveal>
+  <div class="section__inner">
+    <header class="section__header">
+      <div>
+        <p class="lab-eyebrow">Curaduría del Tostador</p>
+        <h2 class="section__title" id="home-specialties-title">Especialidades de Temporada</h2>
+      </div>
+      <a class="section__link" routerLink="/especialidades">Ver todas las especialidades &#8594;</a>
+    </header>
+
+    @if (!homeData()) {
+      <div class="bento-grid">
+        @for (s of [1, 2, 3, 4]; track s) {
+          <app-skeleton-card />
+        }
+      </div>
+    } @else {
+      <div class="bento-grid">
+        @for (item of homeData()!.featuredSpecialties; track item.id; let i = $index) {
+          <article class="specialty-card" [class.specialty-card--wide]="i === 0 || i === 3">
+            <div class="specialty-card__media">
+              <img [src]="item.imageUrl" [alt]="item.name" loading="lazy" />
+              <span class="specialty-card__category">{{ item.categoryName }}</span>
+            </div>
+
+            <div class="specialty-card__body">
+              <div class="specialty-card__meta">
+                <span>{{ item.origin || 'Origen de la Casa' }}</span>
+                @if (roastDots(item.roastLevel) > 0) {
+                  <span class="roast-meter" [title]="roastLabel(item.roastLevel)">
+                    <small>{{ roastLabel(item.roastLevel) }}</small>
+                    @for (dot of [1, 2, 3, 4, 5]; track dot) {
+                      <i [class.is-filled]="dot <= roastDots(item.roastLevel)"></i>
+                    }
+                  </span>
+                }
+              </div>
+
+              <h3>{{ item.name }}</h3>
+              <p class="specialty-card__notes">{{ item.tastingNotes }}</p>
+
+              <div class="specialty-card__footer">
+                @if (item.startingPrice !== null) {
+                  <app-price-badge
+                    [price]="item.startingPrice"
+                    [currency]="item.currency"
+                  />
+                }
+                <button
+                  type="button"
+                  class="card-ask-btn"
+                  (click)="openBarista('Cuéntame sobre el perfil y precios de ' + item.name)"
+                >
+                  Consultar al Barista
+                </button>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    }
+  </div>
+</section>
+
+<!-- Servicios Destacados -->
+<section class="section section--linen" aria-labelledby="home-services-title" appReveal>
+  <div class="section__inner">
+    <header class="section__header">
+      <div>
+        <p class="lab-eyebrow">Experiencias en Barra</p>
+        <h2 class="section__title" id="home-services-title">Servicios del Coffee Lab</h2>
+      </div>
+      <a class="section__link" routerLink="/servicios">Explorar los 6 servicios &#8594;</a>
+    </header>
+
+    <div class="services-grid">
+      @for (service of homeData()?.featuredServices || []; track service.id) {
+        <article class="service-box">
+          <div class="service-box__top">
+            <span class="service-box__availability">{{ service.availabilityNote }}</span>
+            @if (service.requiresReservation) {
+              <span class="service-box__tag">Requiere reserva</span>
+            }
+          </div>
+          <h3>{{ service.title }}</h3>
+          <p>{{ service.shortDescription }}</p>
+          <div class="service-box__bottom">
+            @if (service.startingPrice !== null) {
+              <app-price-badge [price]="service.startingPrice" currency="BOB" />
+            }
+            <a routerLink="/servicios">Detalle &#8594;</a>
+          </div>
+        </article>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Bloque Transparencia / Storytelling -->
+@if (homeData()?.business; as biz) {
+  <section class="section" aria-labelledby="home-story-title" appReveal>
+    <div class="section__inner story-split">
+      <div>
+        <p class="lab-eyebrow">Filosofía &amp; Trazabilidad</p>
+        <h2 class="section__title" id="home-story-title">
+          Transparencia desde la finca hasta la curva de tueste
+        </h2>
+      </div>
+      <div class="story-split__content">
+        <p>{{ biz.fullHistory }}</p>
+        <div class="story-split__actions">
+          <a class="lab-btn" routerLink="/nosotros">Conocer nuestra historia &amp; tienda</a>
+          <a class="lab-btn lab-btn--ghost" routerLink="/contactos">Reservar cata o evento</a>
+        </div>
+      </div>
+    </div>
+  </section>
+}

@@ -1,0 +1,74 @@
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__top">
+      <div class="footer__brand-col">
+        <span class="footer__tag">COFFEE LAB · SPECIALTY ROASTERY</span>
+        @if (aboutData()?.business; as biz) {
+          <h2 class="footer__title">{{ biz.brandName }}</h2>
+          <p class="footer__slogan">{{ biz.slogan }}</p>
+          <p class="footer__meta">{{ biz.address }} · {{ biz.city }}</p>
+        } @else {
+          <h2 class="footer__title">Origen &amp; Crema Coffee Lab</h2>
+        }
+      </div>
+
+      <nav class="footer__col" aria-label="Mapa del sitio">
+        <h3 class="footer__heading">Explorar</h3>
+        <a routerLink="/inicio">Inicio</a>
+        <a routerLink="/servicios">Servicios</a>
+        <a routerLink="/especialidades">Especialidades</a>
+        <a routerLink="/nosotros">Nosotros &amp; Tienda</a>
+        <a routerLink="/precios">Carta &amp; Precios</a>
+        <a routerLink="/contactos">Contactos</a>
+      </nav>
+
+      <div class="footer__col">
+        <h3 class="footer__heading">Horarios del Lab</h3>
+        @if (aboutData()?.business?.openingHours; as hours) {
+          <dl class="footer__hours">
+            <div>
+              <dt>Lun – Vie</dt>
+              <dd>{{ hours.lunes_viernes }}</dd>
+            </div>
+            <div>
+              <dt>Sábados</dt>
+              <dd>{{ hours.sabado }}</dd>
+            </div>
+            <div>
+              <dt>Domingos</dt>
+              <dd>{{ hours.domingo }}</dd>
+            </div>
+          </dl>
+        }
+      </div>
+
+      <div class="footer__col">
+        <h3 class="footer__heading">Contacto Directo</h3>
+        @if (aboutData()?.business; as biz) {
+          <a [href]="'tel:' + biz.phone">{{ biz.phone }}</a>
+          <a [href]="'mailto:' + biz.email">{{ biz.email }}</a>
+          @if (biz.socialLinks.instagram) {
+            <a [href]="biz.socialLinks.instagram" target="_blank" rel="noopener noreferrer">
+              Instagram &#8599;
+            </a>
+          }
+          @if (biz.socialLinks.tiktok) {
+            <a [href]="biz.socialLinks.tiktok" target="_blank" rel="noopener noreferrer">
+              TikTok &#8599;
+            </a>
+          }
+        }
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <span>
+        &copy; {{ currentYear }}
+        {{ aboutData()?.business?.brandName || 'Origen & Crema Coffee Lab' }}
+      </span>
+      <span class="footer__tech">
+        Trazabilidad Directa · Impulsado por Node.js, MySQL &amp; Gemma 3
+      </span>
+    </div>
+  </div>
+</footer>

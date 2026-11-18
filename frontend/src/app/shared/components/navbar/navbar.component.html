@@ -1,0 +1,47 @@
+<header
+  class="nav-shell"
+  [class.nav-shell--solid]="!overDarkHero()"
+  [class.nav-shell--transparent]="overDarkHero()"
+>
+  <nav class="nav" aria-label="Navegación principal">
+    <a class="nav__brand" routerLink="/inicio" (click)="closeMenu()">
+      <svg class="nav__emblem" viewBox="0 0 36 36" aria-hidden="true">
+        <polygon points="18,2 34,18 18,34 2,18" fill="none" stroke="currentColor" stroke-width="1.6" />
+        <circle cx="18" cy="18" r="5" fill="none" stroke="currentColor" stroke-width="1.5" />
+        <line x1="18" y1="6" x2="18" y2="11" stroke="currentColor" stroke-width="1.5" />
+        <line x1="18" y1="25" x2="18" y2="30" stroke="currentColor" stroke-width="1.5" />
+      </svg>
+      <span class="nav__brand-text">
+        <strong>{{ aboutData()?.business?.brandName || 'Origen & Crema' }}</strong>
+        <small>COFFEE LAB · ROASTERY</small>
+      </span>
+    </a>
+
+    <button
+      class="nav__toggle"
+      type="button"
+      [attr.aria-expanded]="menuOpen()"
+      aria-controls="nav-drawer"
+      [attr.aria-label]="menuOpen() ? 'Cerrar menú' : 'Abrir menú'"
+      (click)="toggleMenu()"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <div class="nav__links" id="nav-drawer" [class.nav__links--open]="menuOpen()">
+      <a routerLink="/inicio" routerLinkActive="is-active" (click)="closeMenu()">Inicio</a>
+      <a routerLink="/servicios" routerLinkActive="is-active" (click)="closeMenu()">Servicios</a>
+      <a routerLink="/especialidades" routerLinkActive="is-active" (click)="closeMenu()">Especialidades</a>
+      <a routerLink="/nosotros" routerLinkActive="is-active" (click)="closeMenu()">Nosotros</a>
+      <a routerLink="/precios" routerLinkActive="is-active" (click)="closeMenu()">Precios</a>
+      <a routerLink="/contactos" routerLinkActive="is-active" (click)="closeMenu()">Contactos</a>
+
+      <button class="nav__ai-btn" type="button" (click)="openBaristaAi()">
+        <span class="nav__ai-dot" aria-hidden="true"></span>
+        Barista IA
+      </button>
+    </div>
+  </nav>
+</header>

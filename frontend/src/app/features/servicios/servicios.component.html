@@ -1,0 +1,113 @@
+<section class="page-head">
+  <div class="page-head__inner">
+    <p class="lab-eyebrow">Hospitalidad &amp; Precisión</p>
+    <h1>Servicios del Coffee Lab</h1>
+    <p class="page-head__lead">
+      Desde calibración diaria de espresso hasta talleres sensoriales, coworking acústico y barras móviles para eventos.
+    </p>
+
+    <div class="filter-bar" role="tablist" aria-label="Filtrar servicios">
+      <button
+        type="button"
+        [class.is-active]="activeFilter() === 'all'"
+        (click)="setFilter('all')"
+      >
+        Todos
+      </button>
+      <button
+        type="button"
+        [class.is-active]="activeFilter() === 'featured'"
+        (click)="setFilter('featured')"
+      >
+        Destacados
+      </button>
+      <button
+        type="button"
+        [class.is-active]="activeFilter() === 'walkin'"
+        (click)="setFilter('walkin')"
+      >
+        Sin reserva
+      </button>
+      <button
+        type="button"
+        [class.is-active]="activeFilter() === 'reservation'"
+        (click)="setFilter('reservation')"
+      >
+        Con reserva
+      </button>
+    </div>
+  </div>
+</section>
+
+<section class="services-section" appReveal>
+  <div class="services-section__inner">
+    @if (error()) {
+      <p class="lab-error">{{ error() }}</p>
+    }
+
+    @if (!services()) {
+      <div class="services-grid">
+        @for (item of [1, 2, 3, 4, 5, 6]; track item) {
+          <app-skeleton-card />
+        }
+      </div>
+    } @else {
+      <div class="services-grid">
+        @for (service of filteredServices(); track service.id) {
+          <article class="service-card">
+            @if (service.imageUrl) {
+              <div class="service-card__image">
+                <img [src]="service.imageUrl" [alt]="service.title" loading="lazy" />
+                <span class="service-card__badge" [class.is-sage]="!service.requiresReservation">
+                  {{ service.requiresReservation ? 'Previa reserva' : 'Disponible hoy' }}
+                </span>
+              </div>
+            }
+
+            <div class="service-card__body">
+              <div class="service-card__kicker">
+                <span class="service-card__icon" aria-hidden="true">
+                  @switch (service.iconName) {
+                    @case ('coffee') { &#9749; }
+                    @case ('droplet') { &#128167; }
+                    @case ('flask') { &#9879; }
+                    @case ('laptop') { &#9000; }
+                    @case ('package') { &#9635; }
+                    @default { &#10022; }
+                  }
+                </span>
+                <span>{{ service.availabilityNote }}</span>
+              </div>
+
+              <h2>{{ service.title }}</h2>
+              <p class="service-card__short">{{ service.shortDescription }}</p>
+              <p class="service-card__full">{{ service.fullDescription }}</p>
+
+              <div class="service-card__footer">
+                <div>
+                  @if (service.startingPrice !== null) {
+                    <small class="service-card__from">Desde</small>
+                    <app-price-badge [price]="service.startingPrice" currency="BOB" />
+                  }
+                </div>
+
+                <div class="service-card__actions">
+                  <button
+                    type="button"
+                    class="mini-btn"
+                    (click)="askAboutService(service.title)"
+                  >
+                    Preguntar IA
+                  </button>
+                  <a class="mini-btn mini-btn--primary" routerLink="/contactos">
+                    {{ service.requiresReservation ? 'Reservar' : 'Consultar' }}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    }
+  </div>
+</section>

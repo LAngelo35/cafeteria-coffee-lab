@@ -1,0 +1,154 @@
+<section class="about-head">
+  <div class="about-head__inner">
+    <p class="lab-eyebrow">Historia, Tostaduría &amp; Salón</p>
+    <h1>{{ aboutData()?.business?.brandName || 'Nuestra Historia' }}</h1>
+    <p class="about-head__lead">
+      {{ aboutData()?.business?.slogan }}
+    </p>
+  </div>
+</section>
+
+@if (error()) {
+  <div class="about-alert">{{ error() }}</div>
+}
+
+<!-- Split 50/50 Historia + Línea de Tiempo -->
+<section class="about-section" appReveal>
+  <div class="about-section__inner about-split">
+    <div class="about-story">
+      <span class="about-kicker">MANIFIESTO DEL LABORATORIO</span>
+      <h2>Del grano verde en finca a tu taza</h2>
+      @if (aboutData()?.business; as biz) {
+        <p class="about-story__short">{{ biz.shortAbout }}</p>
+        <p class="about-story__full">{{ biz.fullHistory }}</p>
+      }
+      <a class="lab-btn" routerLink="/contactos">Visítanos o reserva una cata</a>
+    </div>
+
+    <div class="timeline" aria-label="Hitos históricos de la cafetería">
+      @if (!aboutData()) {
+        <app-skeleton-card height="260px" />
+      } @else {
+        @for (hito of aboutData()!.milestones; track hito.id) {
+          <article class="timeline__item">
+            <span class="timeline__year">{{ hito.year }}</span>
+            <div class="timeline__body">
+              <h3>{{ hito.title }}</h3>
+              <p>{{ hito.description }}</p>
+            </div>
+          </article>
+        }
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Galería de la Tienda con Lightbox -->
+<section class="about-section about-section--linen" aria-labelledby="gallery-title" appReveal>
+  <div class="about-section__inner">
+    <header class="gallery-header">
+      <div>
+        <p class="lab-eyebrow">Arquitectura &amp; Barra</p>
+        <h2 id="gallery-title">Galería de la Tienda</h2>
+      </div>
+      <span class="gallery-hint">Haz clic en cualquier fotografía para ampliar</span>
+    </header>
+
+    <div class="gallery-grid">
+      @for (photo of aboutData()?.gallery || []; track photo.id; let i = $index) {
+        <button
+          type="button"
+          class="gallery-tile"
+          (click)="openLightbox(i)"
+          [attr.aria-label]="'Ampliar foto: ' + photo.title"
+        >
+          <img [src]="photo.mediaUrl" [alt]="photo.title" loading="lazy" />
+          <div class="gallery-tile__caption">
+            <strong>{{ photo.title }}</strong>
+            <span>{{ photo.caption }}</span>
+          </div>
+        </button>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Ficha práctica + Mapa Interactivo -->
+@if (aboutData()?.business; as biz) {
+  <section class="about-section" aria-labelledby="visit-title" appReveal>
+    <div class="about-section__inner visit-grid">
+      <div class="visit-card">
+        <p class="lab-eyebrow">Encuéntranos</p>
+        <h2 id="visit-title">Visita el Coffee Lab</h2>
+
+        <dl class="visit-dl">
+          <div>
+            <dt>Dirección</dt>
+            <dd>{{ biz.address }}, {{ biz.city }}</dd>
+          </div>
+          <div>
+            <dt>Teléfono / WhatsApp</dt>
+            <dd>
+              <a [href]="'tel:' + biz.phone">{{ biz.phone }}</a>
+              @if (biz.whatsapp) {
+                <span> · WhatsApp {{ biz.whatsapp }}</span>
+              }
+            </dd>
+          </div>
+          <div>
+            <dt>Correo</dt>
+            <dd><a [href]="'mailto:' + biz.email">{{ biz.email }}</a></dd>
+          </div>
+          <div>
+            <dt>Horarios</dt>
+            <dd>
+              Lun–Vie: {{ biz.openingHours.lunes_viernes }}<br />
+              Sábados: {{ biz.openingHours.sabado }}<br />
+              Domingos: {{ biz.openingHours.domingo }}
+            </dd>
+          </div>
+        </dl>
+      </div>
+
+      @if (mapUrl(); as url) {
+        <div class="visit-map">
+          <iframe
+            [src]="url"
+            title="Ubicación en mapa de Origen y Crema Coffee Lab"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            allowfullscreen
+          ></iframe>
+        </div>
+      }
+    </div>
+  </section>
+}
+
+<!-- Modal Lightbox -->
+@if (activePhoto(); as current) {
+  <div class="lightbox" role="dialog" aria-modal="true" [attr.aria-label]="current.title">
+    <button
+      type="button"
+      class="lightbox__backdrop"
+      aria-label="Cerrar galería"
+      (click)="closeLightbox()"
+    ></button>
+    <div class="lightbox__dialog">
+      <button type="button" class="lightbox__close" aria-label="Cerrar" (click)="closeLightbox()">
+        &times;
+      </button>
+      <img [src]="current.mediaUrl" [alt]="current.title" />
+      <div class="lightbox__footer">
+        <div>
+          <h3>{{ current.title }}</h3>
+          <p>{{ current.caption }}</p>
+        </div>
+        <div class="lightbox__nav">
+          <button type="button" (click)="stepLightbox(-1)" aria-label="Foto anterior">&#8592;</button>
+          <button type="button" (click)="stepLightbox(1)" aria-label="Foto siguiente">&#8594;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+}

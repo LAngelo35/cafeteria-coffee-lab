@@ -1,0 +1,35 @@
+:root {
+  /* Paleta Warm Minimalism & Editorial Craft */
+  --bg-parchment: #F7F4EF;
+  --bg-linen: #EFE9DF;
+  --bg-card: #FBF9F5;
+  --bg-roast-dark: #16110E;
+  --text-espresso: #1E1714;
+  --text-walnut: #5C4B43;
+  --text-muted: #7B6A61;
+  --accent-terracotta: #C66B3D;
+  --accent-terracotta-dark: #A5532A;
+  --accent-sage: #4A5D4E;
+  --accent-crema: #D4A373;
+  --overlay-roast: rgba(20, 16, 14, 0.56);
+
+  /* Líneas arquitectónicas estilo Onyx Coffee Lab */
+  --line-hairline: rgba(30, 23, 20, 0.12);
+  --line-strong: rgba(30, 23, 20, 0.24);
+
+  /* Tipografías */
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* Radios y sombras sutiles */
+  --radius-sm: 4px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --shadow-editorial: 0 18px 45px rgba(30, 23, 20, 0.08);
+  --shadow-float: 0 20px 50px rgba(22, 17, 14, 0.22);
+
+  /* Layout */
+  --container-max: 1320px;
+  --nav-height: 78px;
+}

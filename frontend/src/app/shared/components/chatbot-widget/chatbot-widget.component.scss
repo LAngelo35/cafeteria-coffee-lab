@@ -1,0 +1,265 @@
+:host {
+  position: relative;
+  z-index: 1000;
+}
+
+.barista-chat {
+  position: fixed;
+  right: clamp(1rem, 3vw, 1.8rem);
+  bottom: clamp(1rem, 3vw, 1.8rem);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.85rem;
+}
+
+.barista-chat__panel {
+  display: flex;
+  flex-direction: column;
+  width: min(25rem, calc(100vw - 2rem));
+  height: min(35rem, calc(100vh - 7rem));
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  background: var(--bg-parchment);
+  box-shadow: var(--shadow-float);
+  overflow: hidden;
+}
+
+.barista-chat__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.2rem;
+  background: var(--bg-roast-dark);
+  color: #f7f4ef;
+
+  h2 {
+    margin: 0.25rem 0 0.15rem;
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 500;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.78rem;
+    color: rgba(247, 244, 239, 0.72);
+  }
+}
+
+.barista-chat__badge {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-crema);
+}
+
+.barista-chat__close {
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  background: transparent;
+  color: #f7f4ef;
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.12);
+  }
+}
+
+.barista-chat__messages {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--bg-parchment);
+}
+
+.barista-chat__bubble {
+  max-width: 86%;
+  padding: 0.75rem 0.95rem;
+  border-radius: 12px;
+  font-size: 0.88rem;
+  line-height: 1.5;
+
+  p {
+    margin: 0;
+    white-space: pre-line;
+  }
+}
+
+.barista-chat__bubble--assistant {
+  align-self: flex-start;
+  background: var(--bg-linen);
+  border: 1px solid var(--line-hairline);
+  color: var(--text-espresso);
+  border-bottom-left-radius: 2px;
+}
+
+.barista-chat__bubble--user {
+  align-self: flex-end;
+  background: var(--text-espresso);
+  color: #f7f4ef;
+  border-bottom-right-radius: 2px;
+}
+
+.barista-chat__bubble--fallback {
+  border-color: var(--accent-crema);
+}
+
+.barista-chat__meta {
+  display: block;
+  margin-top: 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--text-muted);
+}
+
+.barista-chat__typing {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 999px;
+  background: var(--bg-linen);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-walnut);
+}
+
+.barista-chat__dots {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--accent-terracotta);
+  animation: pulse 1s infinite ease-in-out;
+}
+
+.barista-chat__chips {
+  display: flex;
+  gap: 0.4rem;
+  padding: 0.6rem 0.9rem;
+  overflow-x: auto;
+  border-top: 1px solid var(--line-hairline);
+  background: var(--bg-card);
+}
+
+.barista-chat__chip {
+  flex: 0 0 auto;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: var(--bg-parchment);
+  font-size: 0.72rem;
+  color: var(--text-walnut);
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease;
+
+  &:hover:not(:disabled) {
+    background: var(--accent-terracotta);
+    border-color: var(--accent-terracotta);
+    color: #fff;
+  }
+}
+
+.barista-chat__form {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-top: 1px solid var(--line-hairline);
+  background: var(--bg-card);
+
+  input {
+    flex: 1;
+    min-width: 0;
+    padding: 0.65rem 0.95rem;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    background: var(--bg-parchment);
+    font-size: 0.86rem;
+
+    &:focus {
+      outline: none;
+      border-color: var(--accent-terracotta);
+    }
+  }
+
+  button {
+    width: 2.5rem;
+    height: 2.5rem;
+    flex-shrink: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--accent-terracotta);
+    color: #fff;
+    font-size: 1.1rem;
+    cursor: pointer;
+
+    &:disabled {
+      background: #c8beb2;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.barista-chat__fab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  height: 3.4rem;
+  padding: 0 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: var(--bg-roast-dark);
+  color: #f7f4ef;
+  box-shadow: var(--shadow-float);
+  cursor: pointer;
+  transition: transform 180ms ease, background-color 180ms ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    background: var(--accent-terracotta);
+  }
+}
+
+.barista-chat__fab-icon {
+  width: 1.35rem;
+  height: 1.35rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.barista-chat__fab-label {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.barista-chat__fab-close {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}

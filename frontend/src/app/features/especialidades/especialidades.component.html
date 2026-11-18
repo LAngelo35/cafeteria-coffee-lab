@@ -1,0 +1,136 @@
+<section class="spec-head">
+  <div class="spec-head__inner">
+    <p class="lab-eyebrow">Fichas Sensoriales &amp; Microlotes</p>
+    <h1>Especialidades de la Casa</h1>
+    <p class="spec-head__lead">
+      Cada taza y cada bolsa lleva su origen, altitud, método de extracción y perfil de tueste documentado en nuestra base de datos.
+    </p>
+
+    <div class="spec-filters">
+      <div class="spec-filters__row" role="tablist" aria-label="Filtrar por categoría">
+        <button
+          type="button"
+          [class.is-active]="selectedCategory() === 'all'"
+          (click)="setCategory('all')"
+        >
+          Todas las barras
+        </button>
+        @for (cat of data()?.categories || []; track cat.id) {
+          <button
+            type="button"
+            [class.is-active]="selectedCategory() === cat.slug"
+            (click)="setCategory(cat.slug)"
+          >
+            {{ cat.name }}
+          </button>
+        }
+      </div>
+
+      <div class="spec-filters__tags" role="group" aria-label="Etiquetas dietéticas">
+        @for (filter of dietaryFilters; track filter.key) {
+          <button
+            type="button"
+            class="tag-pill"
+            [class.is-active]="selectedTag() === filter.key"
+            (click)="setTag(filter.key)"
+          >
+            {{ filter.label }}
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="spec-body" appReveal>
+  <div class="spec-body__inner">
+    @if (error()) {
+      <p class="lab-error">{{ error() }}</p>
+    }
+
+    @if (!data()) {
+      <div class="bento">
+        @for (s of [1, 2, 3, 4, 5, 6]; track s) {
+          <app-skeleton-card />
+        }
+      </div>
+    } @else if (filteredItems().length === 0) {
+      <div class="empty-state">
+        <p>No encontramos especialidades que coincidan con esa combinación de filtros.</p>
+        <button type="button" class="lab-btn" (click)="setCategory('all'); setTag('all')">
+          Limpiar filtros
+        </button>
+      </div>
+    } @else {
+      <div class="bento">
+        @for (item of filteredItems(); track item.id; let i = $index) {
+          <article
+            class="bento-card"
+            [class.bento-card--featured]="i % 5 === 0 || i % 5 === 3"
+          >
+            <div class="bento-card__media">
+              <img [src]="item.imageUrl" [alt]="item.name" loading="lazy" />
+              <div class="bento-card__badges">
+                <span class="badge-dark">{{ item.categoryName }}</span>
+                @for (tag of item.dietaryTags; track tag) {
+                  <span class="badge-sage">{{ formatTag(tag) }}</span>
+                }
+              </div>
+            </div>
+
+            <div class="bento-card__content">
+              <div class="bento-card__telemetry">
+                <span>{{ item.origin || 'Obrador Propio' }}</span>
+                <span>{{ item.brewMethod }}</span>
+              </div>
+
+              <h2>{{ item.name }}</h2>
+              <p class="bento-card__desc">{{ item.description }}</p>
+
+              @if (item.tastingNotes) {
+                <div class="bento-card__tasting">
+                  <small>NOTAS DE CATA</small>
+                  <strong>{{ item.tastingNotes }}</strong>
+                </div>
+              }
+
+              @if (roastDots(item.roastLevel) > 0) {
+                <div class="bento-card__roast">
+                  <small>CURVA DE TUESTE · {{ roastText(item.roastLevel) }}</small>
+                  <div class="dots" aria-hidden="true">
+                    @for (dot of [1, 2, 3, 4, 5]; track dot) {
+                      <span [class.is-on]="dot <= roastDots(item.roastLevel)"></span>
+                    }
+                  </div>
+                </div>
+              }
+
+              <div class="bento-card__variants">
+                @for (v of item.variants; track v.id) {
+                  <span class="variant-chip">
+                    {{ v.label }} · Bs {{ v.promoPrice ?? v.price }}
+                  </span>
+                }
+              </div>
+
+              <div class="bento-card__footer">
+                @if (item.startingPrice !== null) {
+                  <div>
+                    <small class="from-label">DESDE</small>
+                    <app-price-badge [price]="item.startingPrice" [currency]="item.currency" />
+                  </div>
+                }
+                <div class="bento-card__actions">
+                  <button type="button" class="ask-btn" (click)="askBarista(item.name)">
+                    Barista IA
+                  </button>
+                  <a class="price-link" routerLink="/precios">Ver carta &#8594;</a>
+                </div>
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    }
+  </div>
+</section>

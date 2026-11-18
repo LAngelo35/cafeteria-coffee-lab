@@ -1,0 +1,17 @@
+# Dependencies
+**/node_modules/
+
+# Build & Angular cache
+**/dist/
+**/.angular/
+frontend/out-tsc/
+
+# Environment secrets (keep .env.example)
+backend/.env
+**/.env.local
+
+# OS & Logs
+.DS_Store
+Thumbs.db
+**/*.log
+npm-debug.log*

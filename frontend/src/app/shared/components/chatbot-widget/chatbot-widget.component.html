@@ -1,0 +1,95 @@
+<div class="barista-chat">
+  @if (isOpen()) {
+    <section class="barista-chat__panel" role="dialog" aria-labelledby="barista-chat-title">
+      <header class="barista-chat__header">
+        <div>
+          <span class="barista-chat__badge">OLLAMA · {{ activeModel() }}</span>
+          <h2 id="barista-chat-title">Barista Virtual</h2>
+          <p>Conectado en vivo a la carta y horarios</p>
+        </div>
+        <button
+          class="barista-chat__close"
+          type="button"
+          aria-label="Cerrar asistente barista"
+          (click)="toggle()"
+        >
+          &times;
+        </button>
+      </header>
+
+      <div class="barista-chat__messages" #scrollContainer aria-live="polite">
+        @for (msg of messages(); track $index) {
+          <article
+            class="barista-chat__bubble"
+            [class.barista-chat__bubble--user]="msg.role === 'user'"
+            [class.barista-chat__bubble--assistant]="msg.role === 'assistant'"
+            [class.barista-chat__bubble--fallback]="msg.isFallback"
+          >
+            <p>{{ msg.content }}</p>
+            @if (msg.latencyMs) {
+              <small class="barista-chat__meta">{{ msg.latencyMs }} ms</small>
+            }
+          </article>
+        }
+
+        @if (isSending()) {
+          <div class="barista-chat__typing">
+            <span class="barista-chat__dots" aria-hidden="true"></span>
+            El barista está infusionando tu respuesta...
+          </div>
+        }
+      </div>
+
+      <div class="barista-chat__chips" aria-label="Consultas rápidas">
+        @for (chip of suggestedQuestions; track chip) {
+          <button
+            type="button"
+            class="barista-chat__chip"
+            [disabled]="isSending()"
+            (click)="submitPrompt(chip)"
+          >
+            {{ chip }}
+          </button>
+        }
+      </div>
+
+      <form class="barista-chat__form" (ngSubmit)="sendFromInput()">
+        <input
+          type="text"
+          name="baristaMessage"
+          [ngModel]="draftMessage()"
+          (ngModelChange)="draftMessage.set($event)"
+          placeholder="Pregunta sobre orígenes, precios, vegano..."
+          aria-label="Escribe tu consulta al barista"
+          [disabled]="isSending()"
+        />
+        <button
+          type="submit"
+          aria-label="Enviar consulta"
+          [disabled]="isSending() || !draftMessage().trim()"
+        >
+          &#8593;
+        </button>
+      </form>
+    </section>
+  }
+
+  <button
+    class="barista-chat__fab"
+    type="button"
+    [attr.aria-expanded]="isOpen()"
+    [attr.aria-label]="isOpen() ? 'Cerrar Barista IA' : 'Hablar con el Barista IA'"
+    (click)="toggle()"
+  >
+    @if (isOpen()) {
+      <span class="barista-chat__fab-close">&times;</span>
+    } @else {
+      <svg class="barista-chat__fab-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 10h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5v-5Z" />
+        <path d="M16 11h1.5a2.5 2.5 0 0 1 0 5H16" />
+        <path d="M7 5c0 1.2 1 1.6 1 2.8M11 4c0 1.2 1 1.6 1 2.8" />
+      </svg>
+      <span class="barista-chat__fab-label">Barista IA</span>
+    }
+  </button>
+</div>

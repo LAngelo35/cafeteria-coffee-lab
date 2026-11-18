@@ -1,0 +1,160 @@
+<section class="contact-head">
+  <div class="contact-head__inner">
+    <p class="lab-eyebrow">Conversación Directa</p>
+    <h1>Contactos &amp; Reservas</h1>
+    <p class="contact-head__lead">
+      Coordina catas privadas, reserva mesas en la sala silenciosa o solicita granos recién tostados para tu negocio.
+    </p>
+  </div>
+</section>
+
+<section class="contact-body" appReveal>
+  <div class="contact-body__inner contact-split">
+    <!-- Columna izquierda: canales en vivo -->
+    <aside class="contact-info">
+      @if (aboutData()?.business; as biz) {
+        <div class="contact-info__card">
+          <span class="contact-kicker">CANALES DEL LABORATORIO</span>
+          <h2>{{ biz.brandName }}</h2>
+
+          <dl class="contact-dl">
+            <div>
+              <dt>Dirección</dt>
+              <dd>{{ biz.address }}, {{ biz.city }}</dd>
+            </div>
+            <div>
+              <dt>Teléfono</dt>
+              <dd><a [href]="'tel:' + biz.phone">{{ biz.phone }}</a></dd>
+            </div>
+            @if (biz.whatsapp) {
+              <div>
+                <dt>WhatsApp Directo</dt>
+                <dd>{{ biz.whatsapp }}</dd>
+              </div>
+            }
+            <div>
+              <dt>Correo Electrónico</dt>
+              <dd><a [href]="'mailto:' + biz.email">{{ biz.email }}</a></dd>
+            </div>
+            <div>
+              <dt>Horarios de Atención</dt>
+              <dd>
+                Lun–Vie: {{ biz.openingHours.lunes_viernes }}<br />
+                Sábados: {{ biz.openingHours.sabado }}<br />
+                Domingos: {{ biz.openingHours.domingo }}
+              </dd>
+            </div>
+          </dl>
+        </div>
+      }
+
+      @if (mapUrl(); as url) {
+        <div class="contact-map">
+          <iframe
+            [src]="url"
+            title="Mapa del Coffee Lab"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            allowfullscreen
+          ></iframe>
+        </div>
+      }
+    </aside>
+
+    <!-- Columna derecha: Formulario reactivo -->
+    <div class="contact-form-wrap">
+      <span class="contact-kicker">ESCRÍBENOS</span>
+      <h2>Envía tu consulta</h2>
+
+      <form class="contact-form" [formGroup]="contactForm" (ngSubmit)="submit()" novalidate>
+        <div class="field">
+          <label for="c-name">Nombre completo *</label>
+          <input
+            id="c-name"
+            type="text"
+            formControlName="full_name"
+            placeholder="Ej. Camila Mendoza"
+          />
+          @if (contactForm.controls.full_name.touched && contactForm.controls.full_name.invalid) {
+            <p class="field-error">Ingresa tu nombre completo (mínimo 2 caracteres).</p>
+          }
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="c-email">Correo electrónico *</label>
+            <input
+              id="c-email"
+              type="email"
+              formControlName="email"
+              placeholder="tu@correo.com"
+            />
+            @if (contactForm.controls.email.touched && contactForm.controls.email.invalid) {
+              <p class="field-error">Ingresa un correo electrónico válido.</p>
+            }
+          </div>
+
+          <div class="field">
+            <label for="c-phone">Teléfono / WhatsApp</label>
+            <input
+              id="c-phone"
+              type="tel"
+              formControlName="phone"
+              placeholder="+591 70000000"
+            />
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="c-type">Tipo de consulta *</label>
+            <select id="c-type" formControlName="inquiry_type">
+              @for (opt of inquiryOptions; track opt.value) {
+                <option [value]="opt.value">{{ opt.label }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="c-subject">Asunto</label>
+            <input
+              id="c-subject"
+              type="text"
+              formControlName="subject"
+              placeholder="Cata sábado / Pedido mayorista..."
+            />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="c-message">Mensaje *</label>
+          <textarea
+            id="c-message"
+            rows="5"
+            formControlName="message"
+            placeholder="Cuéntanos detalles, fecha o cantidad de personas..."
+          ></textarea>
+          @if (contactForm.controls.message.touched && contactForm.controls.message.invalid) {
+            <p class="field-error">El mensaje debe tener al menos 10 caracteres.</p>
+          }
+        </div>
+
+        <button class="lab-btn" type="submit" [disabled]="isSubmitting()">
+          {{ isSubmitting() ? 'Enviando al laboratorio...' : 'Enviar consulta →' }}
+        </button>
+
+        @if (successMessage()) {
+          <p class="form-feedback form-feedback--ok" role="status" aria-live="polite">
+            {{ successMessage() }}
+          </p>
+        }
+
+        @if (errorMessage()) {
+          <p class="form-feedback form-feedback--err" role="alert">
+            {{ errorMessage() }}
+          </p>
+        }
+      </form>
+    </div>
+  </div>
+</section>

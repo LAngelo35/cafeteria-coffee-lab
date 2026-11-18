@@ -1,0 +1,161 @@
+<section class="prices-head">
+  <div class="prices-head__inner">
+    <p class="lab-eyebrow">Carta Vigente · Transparencia de Precios</p>
+    <h1>Precios &amp; Formatos</h1>
+    <p class="prices-head__lead">
+      Selecciona el tamaño de taza o gramaje de bolsa para ver el precio exacto en tiempo real desde nuestra base de datos.
+    </p>
+
+    <div class="prices-controls">
+      <div class="prices-tabs" role="tablist" aria-label="Categorías de la carta">
+        <button
+          type="button"
+          [class.is-active]="selectedCategory() === 'all'"
+          (click)="setCategory('all')"
+        >
+          Toda la carta
+        </button>
+        @for (cat of pricesData()?.categories || []; track cat.id) {
+          <button
+            type="button"
+            [class.is-active]="selectedCategory() === cat.slug"
+            (click)="setCategory(cat.slug)"
+          >
+            {{ cat.name }}
+          </button>
+        }
+      </div>
+
+      <label class="prices-search">
+        <span class="sr-only">Buscar en la carta</span>
+        <input
+          type="search"
+          [ngModel]="searchQuery()"
+          (ngModelChange)="searchQuery.set($event)"
+          placeholder="Buscar bebida, origen, Geisha, vegano..."
+        />
+      </label>
+    </div>
+  </div>
+</section>
+
+<section class="prices-body" appReveal>
+  <div class="prices-body__inner">
+    @if (error()) {
+      <p class="lab-error">{{ error() }}</p>
+    }
+
+    @if (!pricesData()) {
+      <div class="skeleton-grid">
+        @for (s of [1, 2, 3, 4]; track s) {
+          <app-skeleton-card height="240px" />
+        }
+      </div>
+    } @else {
+      @if (filteredCategories().length === 0) {
+        <div class="empty-menu">
+          <p>No encontramos productos que coincidan con "{{ searchQuery() }}".</p>
+          <button type="button" class="lab-btn" (click)="searchQuery.set(''); setCategory('all')">
+            Mostrar toda la carta
+          </button>
+        </div>
+      } @else {
+        @for (cat of filteredCategories(); track cat.id) {
+          <section class="menu-group" [attr.aria-labelledby]="'cat-' + cat.slug">
+            <header class="menu-group__header">
+              <div>
+                <h2 [id]="'cat-' + cat.slug">{{ cat.name }}</h2>
+                @if (cat.description) {
+                  <p>{{ cat.description }}</p>
+                }
+              </div>
+              <span class="menu-group__count">{{ cat.items.length }} ítems</span>
+            </header>
+
+            <div class="menu-list">
+              @for (item of cat.items; track item.id) {
+                <article class="menu-row">
+                  <div class="menu-row__main">
+                    <div class="menu-row__title">
+                      <h3>{{ item.name }}</h3>
+                      @if (item.origin) {
+                        <span class="menu-row__origin">{{ item.origin }}</span>
+                      }
+                    </div>
+                    <p class="menu-row__desc">{{ item.description }}</p>
+                    @if (item.tastingNotes) {
+                      <p class="menu-row__notes">Notas: {{ item.tastingNotes }}</p>
+                    }
+                  </div>
+
+                  <div class="menu-row__variants" role="group" [attr.aria-label]="'Tamaños de ' + item.name">
+                    @for (variant of item.variants; track variant.id) {
+                      <button
+                        type="button"
+                        class="variant-btn"
+                        [class.is-selected]="activeVariant(item)?.id === variant.id"
+                        (click)="selectVariant(item.id, variant.id)"
+                      >
+                        {{ variant.label }}
+                      </button>
+                    }
+                  </div>
+
+                  <div class="menu-row__price">
+                    @if (activeVariant(item); as chosen) {
+                      <app-price-badge
+                        [price]="chosen.price"
+                        [promoPrice]="chosen.promoPrice"
+                        [currency]="chosen.currency"
+                      />
+                    }
+                  </div>
+                </article>
+              }
+            </div>
+          </section>
+        }
+      }
+
+      <!-- Combos y Paquetes -->
+      @if (pricesData()!.combos.length > 0) {
+        <section class="combos-section" aria-labelledby="combos-title" appReveal>
+          <header class="combos-header">
+            <p class="lab-eyebrow">Selección &amp; Ahorro</p>
+            <h2 id="combos-title">Combos &amp; Paquetes del Laboratorio</h2>
+          </header>
+
+          <div class="combos-grid">
+            @for (combo of pricesData()!.combos; track combo.id) {
+              <article class="combo-card">
+                <div class="combo-card__top">
+                  @if (combo.badge) {
+                    <span class="combo-card__badge">{{ combo.badge }}</span>
+                  }
+                  <app-price-badge [price]="combo.price" [currency]="combo.currency" />
+                </div>
+
+                <h3>{{ combo.name }}</h3>
+                <p>{{ combo.description }}</p>
+
+                <ul>
+                  @for (included of combo.itemsIncluded; track included) {
+                    <li>{{ included }}</li>
+                  }
+                </ul>
+
+                <button
+                  type="button"
+                  class="combo-card__btn"
+                  (click)="askAboutCombo(combo.name)"
+                >
+                  Consultar disponibilidad al Barista &#8594;
+                </button>
+              </article>
+            }
+          </div>
+        </section>
+      }
+    }
+  </div>
+</section>
